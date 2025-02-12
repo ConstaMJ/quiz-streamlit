@@ -55,14 +55,14 @@ tempo_placeholder.markdown(f"<p class='timer'>Tempo restante: {st.session_state.
 
 if st.session_state.tempo_restante > 0:
   time.sleep(1)
-  st.rerun()  # Atualiza a página automaticamente a cada segundo
+  st.experimental_rerun()  # Atualiza a página automaticamente a cada segundo
 
 if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
   st.session_state.pergunta_atual += 1
   st.session_state.tempo_restante = 30
   st.session_state.inicio_tempo = time.time()
   st.session_state.respondido = False
-  st.rerun()
+  st.experimental_rerun()
 
 # Lógica do jogo
 if st.session_state.pergunta_atual < len(perguntas):
@@ -86,7 +86,7 @@ if st.session_state.pergunta_atual < len(perguntas):
     st.session_state.tempo_restante = 30
     st.session_state.inicio_tempo = time.time()
     st.session_state.respondido = False
-    st.rerun()
+    st.experimental_rerun()
 
   if st.session_state.respondido:
     if st.button("PRÓXIMA PERGUNTA"):
@@ -94,7 +94,7 @@ if st.session_state.pergunta_atual < len(perguntas):
       st.session_state.tempo_restante = 30
       st.session_state.inicio_tempo = time.time()
       st.session_state.respondido = False
-      st.rerun()
+      st.experimental_rerun()
 
 else:
   st.markdown("## 🎉 Fim do jogo!")
@@ -105,4 +105,4 @@ else:
     st.session_state.tempo_restante = 30
     st.session_state.inicio_tempo = time.time()
     st.session_state.respondido = False
-    st.rerun()
+    st.experimental_rerun()
