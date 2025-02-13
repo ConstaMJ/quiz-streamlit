@@ -55,6 +55,7 @@ if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
     st.session_state.tempo_restante = 30
     st.session_state.inicio_tempo = time.time()
     st.session_state.respondido = False
+    time.sleep(1)
     st.rerun()
 
 # Mostra pergunta atual
