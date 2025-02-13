@@ -40,18 +40,22 @@ if "tempo_restante" not in st.session_state:
     st.session_state.tempo_restante = 30
 if "respondido" not in st.session_state:
     st.session_state.respondido = False
+if "inicio_tempo" not in st.session_state:
+    st.session_state.inicio_tempo = time.time()
 
 def atualizar_temporizador():
-    if st.session_state.tempo_restante > 0 and not st.session_state.respondido:
-        time.sleep(1)
-        st.session_state.tempo_restante -= 1
-        st.rerun()
-    elif st.session_state.tempo_restante == 0:
+    tempo_passado = int(time.time() - st.session_state.inicio_tempo)
+    st.session_state.tempo_restante = max(30 - tempo_passado, 0)
+
+    if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
         st.session_state.pergunta_atual += 1
         st.session_state.tempo_restante = 30
+        st.session_state.inicio_tempo = time.time()
         st.session_state.respondido = False
-        st.rerun()
+        st.rerun
 
+atualizar_temporizador()
+    
 if st.session_state.pergunta_atual < len(perguntas):
     pergunta_atual = perguntas[st.session_state.pergunta_atual]
     
@@ -70,12 +74,18 @@ if st.session_state.pergunta_atual < len(perguntas):
             st.session_state.pontuacao += 1
         else:
             st.error(f"\U0001F622 Resposta errada! A resposta certa era: {pergunta_atual['resposta']}")
+        time.sleep(2)
+        st.session_state.pergunta_atual +=1
+        st.session_state.tempo_restante = 30
+        st.session_state.inicio_tempo = time.time()
+        st.session_state.respondido = False
+        st.rerun()
         
     if st.session_state.respondido:
-        atualizar_tempolizador()
         if st.button("PRÓXIMA PERGUNTA"):
             st.session_state.pergunta_atual += 1
             st.session_state.tempo_restante = 30
+            st.session_state.inicio_tempo = time.time()
             st.session_state.respondido = False
             st.rerun()
 else:
@@ -85,5 +95,6 @@ else:
         st.session_state.pontuacao = 0
         st.session_state.pergunta_atual = 0
         st.session_state.tempo_restante = 30
+        st.session_state.inicio_tempo = time.time()
         st.session_state.respondido = False
         st.rerun()
