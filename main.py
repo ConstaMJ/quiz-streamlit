@@ -45,7 +45,6 @@ if "respondido" not in st.session_state:
 if "inicio_tempo" not in st.session_state:
     st.session_state.inicio_tempo = time.time()
 
-# Temporizador atualizado dinamicamente
 tempo_container = st.empty()
 tempo_atualizado = False
 
@@ -59,7 +58,6 @@ while st.session_state.tempo_restante > 0 and not st.session_state.respondido:
     tempo_atualizado = True
     st.rerun()  # Força atualização da interface
 
-# Se o tempo acabar, avança automaticamente
 if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
     st.session_state.pergunta_atual += 1
     st.session_state.tempo_restante = 30
@@ -67,7 +65,6 @@ if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
     st.session_state.respondido = False
     st.rerun()
 
-# Mostra pergunta atual
 if st.session_state.pergunta_atual < len(perguntas):
     pergunta_atual = perguntas[st.session_state.pergunta_atual]
     
