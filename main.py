@@ -2,6 +2,7 @@ import streamlit as st
 import time
 
 st.set_page_config(page_title="Quiz Interativo", page_icon="😎", layout="centered")
+
 st.markdown("""
     <style>
         .title {
@@ -23,15 +24,16 @@ st.markdown("""
 
 st.markdown("<p class='title'>Jogo de Perguntas e Respostas</p>", unsafe_allow_html=True)
 
+# Perguntas do quiz
 perguntas = [
     {"pergunta": "Qual é a capital de Moçambique?", "opcoes": ["Manica", "Beira", "Maputo", "Lilongwe"], "resposta": "Maputo"},
     {"pergunta": "Consta MJ está frequentando que curso no IIMa?", "opcoes": ["Eletricidade de Manutenção Industrial", "Técnico de Construção Civil", "Engenharia Informática", "Mecânica de Manutenção Industrial"], "resposta": "Técnico de Construção Civil"},
     {"pergunta": "Em que ano o Consta MJ começou a estudar no IIMa?", "opcoes": ["2022", "2023", "2024", "2025"], "resposta": "2024"},
     {"pergunta": "Quantos cursos existem no Instituto Industrial de Matundo?", "opcoes": ["1 curso", "2 cursos", "3 cursos", "4 cursos"], "resposta": "3 cursos"},
-  {"pergunta": "Quem programou esse jogo?", "opcoes": ["Constantino MJ", "Claudio MM", "Elias LE", "Tiago CV"], "resposta": "Constantino MJ"}
-
+    {"pergunta": "Quem programou esse jogo?", "opcoes": ["Constantino MJ", "Claudio MM", "Elias LE", "Tiago CV"], "resposta": "Constantino MJ"}
 ]
 
+# Inicializa os estados da sessão
 if "pontuacao" not in st.session_state:
     st.session_state.pontuacao = 0
 if "pergunta_atual" not in st.session_state:
@@ -43,30 +45,37 @@ if "respondido" not in st.session_state:
 if "inicio_tempo" not in st.session_state:
     st.session_state.inicio_tempo = time.time()
 
-def atualizar_temporizador():
+# Temporizador atualizado dinamicamente
+tempo_container = st.empty()
+tempo_atualizado = False
+
+while st.session_state.tempo_restante > 0 and not st.session_state.respondido:
     tempo_passado = int(time.time() - st.session_state.inicio_tempo)
     st.session_state.tempo_restante = max(30 - tempo_passado, 0)
 
-    if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
-        st.session_state.pergunta_atual += 1
-        st.session_state.tempo_restante = 30
-        st.session_state.inicio_tempo = time.time()
-        st.session_state.respondido = False
-        st.rerun()
-
-atualizar_temporizador()
+    tempo_container.markdown(f"<p class='timer'>Tempo restante: {st.session_state.tempo_restante} segundos</p>", unsafe_allow_html=True)
     
+    time.sleep(1)  # Atualiza a cada segundo
+    tempo_atualizado = True
+    st.rerun()  # Força atualização da interface
+
+# Se o tempo acabar, avança automaticamente
+if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
+    st.session_state.pergunta_atual += 1
+    st.session_state.tempo_restante = 30
+    st.session_state.inicio_tempo = time.time()
+    st.session_state.respondido = False
+    st.rerun()
+
+# Mostra pergunta atual
 if st.session_state.pergunta_atual < len(perguntas):
     pergunta_atual = perguntas[st.session_state.pergunta_atual]
     
     st.progress((st.session_state.pergunta_atual + 1) / len(perguntas))
     st.markdown(f"<p class='question'>{pergunta_atual['pergunta']}</p>", unsafe_allow_html=True)
-    
-    tempo = st.empty()
-    tempo.markdown(f"<p class='timer'>Tempo restante: {st.session_state.tempo_restante} segundos</p>", unsafe_allow_html=True)
-    
+
     escolha = st.radio("Escolha uma opção", pergunta_atual["opcoes"], index=None)
-    
+
     if st.button("RESPONDER") and escolha is not None and not st.session_state.respondido:
         st.session_state.respondido = True
         if escolha == pergunta_atual["resposta"]:
@@ -74,13 +83,14 @@ if st.session_state.pergunta_atual < len(perguntas):
             st.session_state.pontuacao += 1
         else:
             st.error(f"\U0001F622 Resposta errada! A resposta certa era: {pergunta_atual['resposta']}")
-        time.sleep(1.5)
-        st.session_state.pergunta_atual +=1
+
+        time.sleep(1.5)  # Pequena pausa antes de avançar
+        st.session_state.pergunta_atual += 1
         st.session_state.tempo_restante = 30
         st.session_state.inicio_tempo = time.time()
         st.session_state.respondido = False
         st.rerun()
-        
+
     if st.session_state.respondido:
         if st.button("PRÓXIMA PERGUNTA"):
             st.session_state.pergunta_atual += 1
@@ -88,6 +98,7 @@ if st.session_state.pergunta_atual < len(perguntas):
             st.session_state.inicio_tempo = time.time()
             st.session_state.respondido = False
             st.rerun()
+
 else:
     st.markdown("## 🎉 Fim do jogo!")
     st.write(f"Pontuação final: **{st.session_state.pontuacao}** de **{len(perguntas)}**")
