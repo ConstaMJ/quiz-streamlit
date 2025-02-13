@@ -45,19 +45,11 @@ if "respondido" not in st.session_state:
 if "inicio_tempo" not in st.session_state:
     st.session_state.inicio_tempo = time.time()
 
-# Atualiza o temporizador automaticamente
-tempo_container = st.empty()
+# Atualiza o temporizador
+tempo_passado = int(time.time() - st.session_state.inicio_tempo)
+st.session_state.tempo_restante = max(30 - tempo_passado, 0)
 
-while st.session_state.tempo_restante > 0 and not st.session_state.respondido:
-    tempo_passado = int(time.time() - st.session_state.inicio_tempo)
-    st.session_state.tempo_restante = max(30 - tempo_passado, 0)
-    
-    tempo_container.markdown(f"<p class='timer'>Tempo restante: {st.session_state.tempo_restante} segundos</p>", unsafe_allow_html=True)
-    
-    time.sleep(1)
-    st.rerun()
-
-# Se o tempo acabar e a pergunta não foi respondida, passa automaticamente
+# Se o tempo acabar e a pergunta ainda não foi respondida, passa para a próxima
 if st.session_state.tempo_restante == 0 and not st.session_state.respondido:
     st.session_state.pergunta_atual += 1
     st.session_state.tempo_restante = 30
@@ -71,6 +63,9 @@ if st.session_state.pergunta_atual < len(perguntas):
 
     st.progress((st.session_state.pergunta_atual + 1) / len(perguntas))
     st.markdown(f"<p class='question'>{pergunta_atual['pergunta']}</p>", unsafe_allow_html=True)
+
+    tempo_container = st.empty()
+    tempo_container.markdown(f"<p class='timer'>Tempo restante: {st.session_state.tempo_restante} segundos</p>", unsafe_allow_html=True)
 
     escolha = st.radio("Escolha uma opção", pergunta_atual["opcoes"], index=None)
 
