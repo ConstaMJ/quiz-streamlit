@@ -52,7 +52,7 @@ def atualizar_temporizador():
         st.session_state.tempo_restante = 30
         st.session_state.inicio_tempo = time.time()
         st.session_state.respondido = False
-        st.rerun
+        st.rerun()
 
 atualizar_temporizador()
     
@@ -74,7 +74,7 @@ if st.session_state.pergunta_atual < len(perguntas):
             st.session_state.pontuacao += 1
         else:
             st.error(f"\U0001F622 Resposta errada! A resposta certa era: {pergunta_atual['resposta']}")
-        time.sleep(2)
+        time.sleep(1.5)
         st.session_state.pergunta_atual +=1
         st.session_state.tempo_restante = 30
         st.session_state.inicio_tempo = time.time()
