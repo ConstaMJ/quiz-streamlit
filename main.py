@@ -72,6 +72,7 @@ if st.session_state.pergunta_atual < len(perguntas):
             st.error(f"\U0001F622 Resposta errada! A resposta certa era: {pergunta_atual['resposta']}")
         
     if st.session_state.respondido:
+        atualizar_tempolizador()
         if st.button("PRÓXIMA PERGUNTA"):
             st.session_state.pergunta_atual += 1
             st.session_state.tempo_restante = 30
